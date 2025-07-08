@@ -1,88 +1,91 @@
-import React, {useState} from "react";
+import React, {useState, useEffect } from "react";
 import "./App.css";
 
 function App() {
-
-    const priorityRanks = (
-        <datalist id="priority-ranking">
-            <option value="Essential"></option>
-            <option value="High"></option>
-            <option value="Medium"></option>
-            <option value="Low"></option>
-            <option value="Backlog"></option>
-        </datalist>
-    )
     const [taskList, setTaskList] = useState([]);
+    const [task, setTask] = useState({title: "", description: "", isCompleted: false});
 
-     const rows = taskList.map(function (item) {
-        return <tr key={item.id}>
-            <td>{item.id}</td>
-            <td> {item.taskDesc}</td>
-            <td>{item.due}</td>
-            <td>{item.complexity}</td>
-            <td>{item.priority}</td>
-        </tr>;
-    });
+    const createTask = () => {
+        fetch('http://localhost:5062/api/tasks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                title: task.title,
+                description: task.description,
+            }),
+        })
+            .then((res) => {
+                if (!res.ok) throw new Error('Network response was not ok');
+                return res.json();
+            })
+            .then((data) => {
+                console.log('Task created:', data);
+                setTaskList(data);
+                setTask({title: "", description: "", isCompleted: false});
+            })
+            .catch((err) => {
+                console.error('Create error:', err);
+            });
+    };
 
-    const [task, setTask] = useState({taskDesc: "", due: "", complexity: "", priority: "", completed: false});
 
-    function handleSubmit(e) {
-    e.preventDefault()
-        // TODO: submit to database
-        const newTask = {
-            ...task,
-            id: taskList.length + 1
-        };
-        setTaskList(prevList => [...prevList, newTask]);
-        console.log(taskList)
-        console.log(task)
+    // const priorityRanks = (
+    //     <datalist id="priority-ranking">
+    //         <option value="Essential"></option>
+    //         <option value="High"></option>
+    //         <option value="Medium"></option>
+    //         <option value="Low"></option>
+    //         <option value="Backlog"></option>
+    //     </datalist>
+    // )
 
-    }
+
+    const rows = taskList.map((item, index) => (
+        <tr key={item.id}>
+            <td>{index + 1}</td>
+            <td>{item.title}</td>
+            <td>{item.description}</td>
+            <td>{item.isCompleted ? "Yes" : "No"}</td>
+        </tr>
+    ));
+
     return (
         <div>
             <form className="add-task">
                 <ul>
                     <li>
                         <label>Task </label>
-                        <input type="text" onChange={(e) => setTask({...task, taskDesc: e.target.value})}
-                               value={task.taskDesc}/>
+                        <input type="text" onChange={(e) => setTask({...task, title: e.target.value})}
+                               value={task.title}/>
                     </li>
                     <li>
-                        <label>Due </label>
-                        <input type="datetime-local" onChange={(e) => setTask({...task, due: e.target.value})}
-                               value={task.due}/>
-                    </li>
-                    <li>
-                        <label>Complexity (0-10) </label>
-                        <input type="number" min="0" max="10"
-                               onChange={(e) => setTask({...task, complexity: e.target.value})}
-                               value={task.complexity}/>
-                    </li>
-                    <li>
-                        <label htmlFor="priority-choice">Priority </label>
-                        <input list="priority-ranking" id="priority-choice" name="priority-choice"
-                               placeholder="Select priority"
-                               onChange={(e) => setTask({...task, priority: e.target.value})}
-                               value={task.priority}/>
+                        <label>Description </label>
+                        <input type="text" onChange={(e) => setTask({...task, description: e.target.value})}
+                               value={task.description}/>
                     </li>
                 </ul>
-                <button onClick={(e) => handleSubmit(e)}> Add task</button>
+                <button onClick={(e) => {
+                    e.preventDefault();
+                    createTask();
+                }}>
+                    Add task
+                </button>
             </form>
             <table className="to-do-list">
                 <thead>
                 <tr>
                     <th>Number</th>
                     <th>Task</th>
-                    <th>Due</th>
-                    <th>Complexity</th>
-                    <th>Priority</th>
+                    <th>Description</th>
+                    <th>Complete</th>
                 </tr>
                 </thead>
                 <tbody>
                 {rows}
                 </tbody>
             </table>
-            {priorityRanks}
         </div>
 
     );
@@ -93,7 +96,7 @@ export default App;
 
 //Editable Rows - update and edit
 //Add task
-//Mark task as done - format appropraitely, remove after 30 days
+//Mark task as done - format appropriately, remove after 30 days
 //Filter for complete/active tasks
 //
 //Colour code deadline / task priority
