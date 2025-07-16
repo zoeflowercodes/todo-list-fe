@@ -1,5 +1,7 @@
-import React, {useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./App.css";
+import AddTaskForm from "./components/add-task-form/add-task-form";
+import TodoList from "./components/todo-list/todo-list";
 
 function App() {
     const [taskList, setTaskList] = useState([]);
@@ -29,8 +31,6 @@ function App() {
                 console.error('Create error:', err);
             });
     };
-
-
     // const priorityRanks = (
     //     <datalist id="priority-ranking">
     //         <option value="Essential"></option>
@@ -41,67 +41,24 @@ function App() {
     //     </datalist>
     // )
 
-
-    const rows = taskList.map((item, index) => (
-        <tr key={item.id}>
-            <td>{index + 1}</td>
-            <td>{item.title}</td>
-            <td>{item.description}</td>
-            <td>{item.isCompleted ? "Yes" : "No"}</td>
-        </tr>
-    ));
-
     return (
-        <div>
-            <form className="add-task">
-                <ul>
-                    <li>
-                        <label>Task </label>
-                        <input type="text" onChange={(e) => setTask({...task, title: e.target.value})}
-                               value={task.title}/>
-                    </li>
-                    <li>
-                        <label>Description </label>
-                        <input type="text" onChange={(e) => setTask({...task, description: e.target.value})}
-                               value={task.description}/>
-                    </li>
-                </ul>
-                <button onClick={(e) => {
-                    e.preventDefault();
-                    createTask();
-                }}>
-                    Add task
-                </button>
-            </form>
-            <table className="to-do-list">
-                <thead>
-                <tr>
-                    <th>Number</th>
-                    <th>Task</th>
-                    <th>Description</th>
-                    <th>Complete</th>
-                </tr>
-                </thead>
-                <tbody>
-                {rows}
-                </tbody>
-            </table>
-        </div>
-
+        <>
+            <AddTaskForm task={task} setTask={setTask} onCreateTask={createTask} />
+            <TodoList taskList={taskList} />
+        </>
     );
 }
 
 export default App;
 
 
+//change table to list
 //Editable Rows - update and edit
-//Add task
+//useEffect diagram
 //Mark task as done - format appropriately, remove after 30 days
 //Filter for complete/active tasks
-//
 //Colour code deadline / task priority
 //Set reminders
-//Integrate BE
 //Reorder, drag and drop
 // Tags
 //Sub task accordion
