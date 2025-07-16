@@ -36,3 +36,47 @@
     transform: rotate(360deg);
   }
 }
+
+.add-task{
+  display: flex;
+  border: 3px solid;
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 10px;
+}
+
+
+li {
+  display: flex;
+  margin: 0.5rem;
+  list-style: none;
+  padding-right: 3rem;
+}
+
+label {
+  min-width: 150px;
+}
+
+input {
+  min-width: 180px;
+}
+
+th {
+  text-align: left;
+  min-width: 150px;
+}
+
+td{
+  text-align: left;
+}
+
+.to-do-list{
+  border: 3px solid;
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 10px;
+}
